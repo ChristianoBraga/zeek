@@ -138,6 +138,34 @@ def _main(path):
                           print('Hide successful.')
                        else:
                           print('Hide failed.')
+                case ['with', file, 'hide', 'table', 'as', label]:
+                    fh = open(file)
+                    data = fh.read()
+                    fh.close()
+                    value = data.split()
+                    if label in zeek_prompt.get_labels():
+                       print(f'Label {label} exists.')
+                       continue
+                    else:
+                       rc, out = zeek_prompt.handle_hide(value)
+                       print(out)
+                       if rc == 0:
+                          zeek_prompt.set_label(label, out)
+                          print('Hide successful.')
+                       else:
+                          print('Hide failed.')
+                case ['with', file, 'hide', 'function', function, 'as', label]:
+                    if label in zeek_prompt.get_labels():
+                       print(f'Label {label} exists.')
+                       continue
+                    else:
+                       rc, out = zeek_prompt.handle_load_and_hide(file, function)
+                       print(out)
+                       if rc == 0:
+                          zeek_prompt.set_label(label, out)
+                          print('Hide successful.')
+                       else:
+                          print('Hide failed.')
                 case ['labels']:
                     if not zeek_prompt.empty_labels():
                         [_print_labeled_commit(s, l) if ZeekEnv.is_hash(s) 
@@ -259,15 +287,15 @@ def _main(path):
                         if proof == None:
                             print(f'Argument {proof_key} is neither a label nor a proof key.')
                             continue
-                        if proof in zeek_prompt._zeek_env.get_proofs(party):
-                            print(f'Can not send {proof} to {target_party}.\nIt is already avaiable to {target_party}.')
-                            continue
                         party = _well_formed_argument(zeek_prompt, target_party)
                         if party == None:
                             print(f'Argument {target_party} is neither a label nor a hash.')
                             continue
                         if party == zeek_prompt.get_party():
                             print(f'Can not send proof to oneself.\nParty {target_party} the is current party.')
+                            continue
+                        if proof in zeek_prompt._zeek_env.get_proofs(party):
+                            print(f'Can not send {proof} to {target_party}.\nIt is already avaiable to {target_party}.')
                             continue
                         rc, out = zeek_prompt.handle_send_proof(party, proof)
                         print(out)

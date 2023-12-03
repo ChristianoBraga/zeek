@@ -33,6 +33,12 @@ class LurkWrapper:
         cmd = 'Hide', ['!(hide', f'{salt}'] + value + [')']
         return cmd
 
+    def _mk_load_and_hide_cmd(file, salt, fun):
+        assert(file != None)
+        assert(salt != None)
+        assert(fun != None)
+        return 'Load', ['!(load', f'\"{file}\")\n'] + ['!(hide', f'{salt}', f'{fun})']
+
     def _mk_open_cmd(value):
         assert(value != None)
         return 'Open', ['!(open', f'{value})']
@@ -121,7 +127,8 @@ class LurkWrapper:
             echo_p.stdout.close()
             # Executes echo <cmd> | lurk
             # For example: echo !(hide 123 53) | lurk
-            comm_out = lurk_p.communicate(timeout=self._timeout)
+            # comm_out = lurk_p.communicate(timeout=self._timeout)
+            comm_out = lurk_p.communicate()
             if lurk_p.returncode < 0:
                 raise LurkWrapperCommException(f'{cmd} failed.')
             else:
@@ -129,6 +136,19 @@ class LurkWrapper:
         except Exception as e:
             print(e)
             raise LurkWrapperCommException(f'{cmd} failed.')
+
+    def load_and_hide(self, file, fun):
+        salt = rand.randint(10_000_000_000, 100_000_000_000)
+        try:            
+            load_cmd = LurkWrapper._mk_load_and_hide_cmd(file, salt, fun)
+            out = self._run(load_cmd[0], load_cmd[1])
+            if LurkWrapper._has_error(out):
+                return 1, LurkWrapper._get_error(out)
+            else:
+                return 0, LurkWrapper._get_hash(out)
+        except Exception as e:
+            print(e)
+            raise LurkWrapperCommException('Load failed.')
 
     def open(self, value):
         try:

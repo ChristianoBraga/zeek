@@ -165,6 +165,17 @@ class ZeekPrompt:
             return lurkw.call('0x'+test, '0x'+value)
         except Exception as e:
             return 1, f'{e}\nUnexpected error while executing Call.'
+        
+    def handle_load_and_hide(self, file, fun):
+        if not self.is_public():
+            try:
+                cd, pd = self._zeek_env.get_current_party_dirs()
+                lurkw = LurkWrapper(self._zeek_env.get_timeout(), cd, pd)
+                return lurkw.load_and_hide(file, fun)
+            except Exception as e:
+                return 1, f'{e}\nUnexpected error while executing load.'
+        else:
+            return 1, 'Only non-public parties may load values.'
 
     def handle_hide(self, value):
         assert(type(value) == list)
