@@ -87,6 +87,7 @@ class ZeekPrompt:
         commits = self._zeek_env.get_commits_from_party()
         proofs  = self._zeek_env.get_proofs_from_party()
         parties = [p for p in self._zeek_env.get_parties() if p != self.get_party()]
+        files = [f for f in os.listdir('.') if os.path.isfile(f)]
         completer = NestedCompleter.from_nested_dict({
             'call'  : _make_completer_dictionary(self, commits, _make_completer_dictionary(self, commits, None)), 
             'check' : {'call' : _make_completer_dictionary(self, self.get_labels(), 
@@ -109,7 +110,9 @@ class ZeekPrompt:
             'save labels': None,
             'send'  : {'secret': _make_completer_dictionary(self, commits, {'to' : _make_completer_dictionary(self, parties, None)}), 
                        'proof':  _make_completer_dictionary(self, proofs,  {'to' : _make_completer_dictionary(self, parties, None)})},
-            'verify': _make_completer_dictionary(self, proofs, None)
+            'verify': _make_completer_dictionary(self, proofs, None),
+            'with' : _make_completer_dictionary(self, files, { 'hide': {'table': {'as': None},
+                                                                        'function': None}})
         })
 
         return self.session.prompt(message, style=style, completer=completer, rprompt=pt.HTML(self._right_prompt(self._zeek_env.get_party())))

@@ -241,9 +241,11 @@ def _main(path):
                         if value == None: 
                             print(f'Argument {value_label} is neither a label nor a hash.')
                             continue                      
-                        with pt.shortcuts.ProgressBar() as pb:
-                             for _ in pb(range(zeek_prompt._zeek_env.get_timeout()), label='Generating proof...'):
-                                 rc, out = zeek_prompt.handle_prove(test, value)
+                        print('Generating proof...')
+                        rc, out = zeek_prompt.handle_prove(test, value)
+                        # with pt.shortcuts.ProgressBar() as pb:
+                        #      for _ in pb(range(zeek_prompt._zeek_env.get_timeout()), label='Generating proof...'):
+                        #          rc, out = zeek_prompt.handle_prove(test, value)
                         print(out)
                         if rc == 0:
                            zeek_prompt.set_label(proof_key_label, out)
@@ -311,9 +313,11 @@ def _main(path):
                     if value == None:
                         print(f'Argument {proof_key} is neither a label or a proof key.')                  
                         continue
-                    with pt.shortcuts.ProgressBar() as pb:
-                        for _ in pb(range(int(zeek_prompt._zeek_env.get_timeout()/10)), label='Verifying proof...'):
-                            rc, out = zeek_prompt.handle_verify(f'\"{value}\"')
+                    print('Verifying proof...')
+                    rc, out = zeek_prompt.handle_verify(f'\"{value}\"')
+                    # with pt.shortcuts.ProgressBar() as pb:
+                    #     for _ in pb(range(int(zeek_prompt._zeek_env.get_timeout()/10)), label='Verifying proof...'):
+                    #         rc, out = zeek_prompt.handle_verify(f'\"{value}\"')
                     out = out.replace('"', '')
                     print(out)
                     if rc == 0:
