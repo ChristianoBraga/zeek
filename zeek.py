@@ -270,15 +270,15 @@ def _main(path):
                         if value == None:
                            print(f'Argument {commit} is neither a label nor a hash.')
                            continue
-                        if value in zeek_prompt._zeek_env.get_commits(party):
-                            print(f'Can not send {commit} to {target_party}.\nIt is already avaiable avaiable to {target_party}.')
-                            continue
                         party = _well_formed_argument(zeek_prompt, target_party)
                         if party == None:
                            print(f'Argument {target_party} is neither a label nor a hash.')
                            continue
                         if party == zeek_prompt.get_party():
                             print(f'Can not send secret to oneself.\nParty {target_party} is the current party.')
+                            continue
+                        if value in zeek_prompt._zeek_env.get_commits(party):
+                            print(f'Can not send {commit} to {target_party}.\nIt is already avaiable avaiable to {target_party}.')
                             continue
                         rc, out = zeek_prompt.handle_send_commit(party, value)
                         print(out)

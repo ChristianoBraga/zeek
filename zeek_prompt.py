@@ -83,7 +83,8 @@ class ZeekPrompt:
         commits = self._zeek_env.get_commits_from_party()
         proofs  = self._zeek_env.get_proofs_from_party()
         parties = [p for p in self._zeek_env.get_parties() if p != self.get_party()]
-        files = [f for f in os.listdir('.') if os.path.isfile(f)]
+        path  = './data'
+        files = [f'{path}/{f}' for f in os.listdir(path) if os.path.isfile(f'{path}/{f}')]
         completer = NestedCompleter.from_nested_dict({
             'call'  : _make_completer_dictionary(self, commits, _make_completer_dictionary(self, commits, None)), 
             'check' : {'call' : _make_completer_dictionary(self, self.get_labels(), 

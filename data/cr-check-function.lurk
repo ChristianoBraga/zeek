@@ -1,0 +1,101 @@
+!(def and (lambda (x y) (if x y x)))
+
+!(defrec any
+   (lambda (p xs)
+     (if xs
+         (if (p (car xs))
+             t
+           (any p (cdr xs)))
+       nil
+     )
+   )
+ )
+
+!(defrec map
+   (lambda (f xs)
+     (if xs
+         (cons (f (car xs))(map f (cdr xs)))
+         nil
+     )
+   ) 
+)
+
+!(defrec lookup_list_pair 
+   (lambda (x p) 
+      (if (eq p nil)
+          ()
+          (if (eq (car (car p)) x) 
+              (cdr (car p))
+              (lookup_list_pair x (cdr p))                     
+          ) 
+      ) 
+   ) 
+) 
+
+!(def get_accounts           (lookup_list_pair "accounts"))
+!(def get_pending_bills      (lookup_list_pair "pending_bills"))
+!(def get_credit_in_use      (lookup_list_pair "credit_in_use"))
+!(def get_collection_actions (lookup_list_pair "collection_actions"))
+!(def get_outstanding_debt   (lookup_list_pair "outstanding_debt"))
+
+!(def get_number   (lookup_list_pair "number"))
+!(def get_type     (lookup_list_pair "type"))
+!(def get_balance  (lookup_list_pair "balance"))
+!(def get_card_num (lookup_list_pair "card_num"))
+!(def get_birthday (lookup_list_pair "birthday"))
+
+!(def age
+   (lambda (today y)
+     (- (car today) (car y))))
+
+!(def not_exists_neg_bal?
+      (lambda (cs)
+        (eq (any (lambda (x) (eq x t))
+                   (map (lambda (bal) (< bal 0))
+                        (map (get_balance) (get_accounts cs))
+                   ) 
+            ) 
+            nil
+        ) 
+      ) 
+) 
+
+!(def not_exists_young_accounts?
+      (lambda (cs today)
+        (eq (map (lambda (x today) (<= (age today x) 5))
+                 (map (get_birthday) (get_accounts cs)))
+            nil) 
+      ) 
+) 
+
+!(def credit_in_use_lt?
+      (lambda (cs limit)
+        (< (get_credit_in_use cs)
+           (/ (* 20 limit) 100))
+      ) 
+) 
+
+!(def no_collection_actions?
+      (lambda (cs)
+        (eq (get_collection_actions cs) nil)
+      )
+)
+
+!(def no_outstanding_debt?
+      (lambda (cs)
+        (eq (get_outstanding_debt cs) nil))
+) 
+
+!(def credit_score_OK?
+      (lambda (cs) 
+         (and (not_exists_neg_bal? cs)
+              (and (not_exists_young_accounts? cs)
+                   (and (credit_in_use_lt? cs 30)
+                        (and (no_collection_actions? cs)
+                            (no_outstanding_debt? cs)
+                        ) 
+                   ) 
+              ) 
+         ) 
+      ) 
+)
