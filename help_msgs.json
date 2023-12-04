@@ -1,0 +1,29 @@
+{
+    "call" : "Command  `call <test> <value>` invokes a function hiden (with the precise semantics of `hide` in Lurk in a hash labeled `test` using the hash labeled `value` as argument. Parameters `test` and `value` may  be hashes instead of labels. Even though one can hide any Lurk value using `Zeek`, at the moment it expects `test` to label a a hash encoding a predicate.",
+    "check" : "Command `check call <test> <value> returns <output> in <proof_key>` check if `call <test> <value>`, as decribed in the help message for `call`, returns `<output>` in the proof labeled (or with hash) `<proff_key>`. The reason why this command exists is because one may wish to check if a given proof is indeed about a given claim (the call) yielding a given value (`<output>`).",
+    "exit" : "Command `exit` terminates the current session. This command also saves the labels declared in the current session in the file `<zeek_dir>/.zeek/labels.json`.",
+    "hash hide" : "Command `hash hide <value>` hides `<value>` behind a hash without creating a label for it. ",
+    "hash new party" : "Command `hash new party <value>` creates a new party which will be represented in the system by the resulting hash. No label is created for it.",
+    "hash prove": "Command `hash prove <test> <value>` creates a proof for `call <test> <value>`. No label is created for the resulting proof key.",
+    "hide value" : "Command `hide <value> as <label>` hides `<value >` behind a hash and created a label for the returned hash.",
+    "hide table" : "Command `with <file> hide table as <label>` hides the Lurk table (essentially a list of pairs) in `<file>` behind a hash and assigns `<label>` to the returned hash.",
+    "hide function" : "Command `with <file> hide function <function> as <label>` loads the Lurk function(s) in `<file>` and hides function `<function>` behind a hash. A label `<label>` is created for the returned hash.",
+    "labels" : "Command `labels` returns all avaiable labels, from all parties. It should be noted that the labels exist only to make simulation simpler, such that one needs not to memorize hashes. However, not security breah will happen. A given party may not `reveal` a secret if it does not own it, that is, if it was not created by a given party or it was not sent to the given party.",
+    "new party": "Command `new party <value> as <label>` behaves as `hash new party <value>` and then assigns `<label>` to the returned hash.",
+    "parties": "Command `parties` prints the avaiable parties.",
+    "party": "Command `party <party>` switches the current party to `<party>`.",
+    "prove": "Command `prove <test> <value> as <label>` behaves as `hash prove <test> <value>` and assigns label `<label>` to it.",
+    "reveal": "Command `reveal <value>` prints the value behind the hash (or label) `<value>`, if the current party owns it, that is, if it was not created by the current party or it was not sent to it.",
+    "save labels": "Command `save labels` forces saving the current labels to file `<zeekd_dir>/.zeek/labels.json`.",
+    "secrets": "Command `secrets` prints both secrets (commits, in Lurk terminology), proof keys of the current party, and their labels, if they exist.",
+    "send secret": "Command `send secret <secret> to <party>` send `<secret>` to party `<party>`. `Zeek` generalizes the commit & proof model or Lurk by allowing a commmit (representing a party) to have commits and proofs associated to it. This is persisted in the file system by creating a directory `h`, named after the hash of a given party, and subdirectories `commits` and `proofs` for `h`. When a secret `s` is sent from one party `p1` to another `p2`, the file representing the given secret `s` is copied from `<zeek_dir>/.zeek/p1/commits` to `<zeek_dir>/.zeek/p2/commits`. Hence, party `h2` willl be able to execute `reveal` `s` and forward it, by sending it, to other parties.",
+    "send proof": "Command `send proof <proof_key> to <party>` sends proof labeled (or hashed in) `<proof_key>` to party `<party>`. `Zeek` generalizes the commit & proof model or Lurk by allowing a commmit (representing a party) to have commits and proofs associated to it. This is persisted in the file system by creating a directory `h`, named after the hash of a given party, and subdirectories `commits` and `proofs` for `h`. When a proof `p` is sent from one party `p1` to another `p2`, the files representing the given proof `p` are copied from `<zeek_dir>/.zeek/p1/proofs` to `<zeek_dir>/.zeek/p2/proofs`. Hence, party `h2` willl be able to execute `check call <test> <value> returns <output> in <proof_key>`, where `call <test> <value>` resulting in `<output` is what is proven by the proof `<proof_key>`.",
+    "verify": "Command `verify <proof_key` verifies (with the Lurk semantics of `verify`) the proof in `<proof_key>`."    
+} 
+
+
+
+
+
+
+

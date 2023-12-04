@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+import asyncio
+
+
 try:
     import os
     import traceback as tb
@@ -26,7 +29,6 @@ def _main(path):
         return zp.get_value(arg) if arg in labels \
                 else arg if ZeekEnv.is_hash(arg) \
                 else None
-
     zeek_prompt = ZeekPrompt(path)
     cmd         = None
     while True:
@@ -109,12 +111,14 @@ def _main(path):
                            print('New party failed.')
                     else:
                         print('Only public can create party.')                     
-                case ['hash', 'prove', test, value]:
+                case ['hash', 'prove', test, value]:  
                     if not zeek_prompt.is_public():
                       if ZeekEnv.is_hash(test) and ZeekEnv.is_hash(value):
-                          with pt.shortcuts.ProgressBar() as pb:
-                            for _ in pb(range(zeek_prompt._zeek_env.get_timeout()), label='Generating proof...'):
-                                rc, out = zeek_prompt.handle_prove(test, value)
+                        #   with pt.shortcuts.ProgressBar() as pb:
+                        #     for _ in pb(range(zeek_prompt._zeek_env.get_timeout()), label='Generating proof...'):
+                        #         rc, out = zeek_prompt.handle_prove(test, value)
+                          print('Generating proof...')
+                          rc, out = zeek_prompt.handle_prove(test, value)
                           print(out)
                           if rc == 0:
                              print(f'Prove sucessful.')
@@ -125,7 +129,9 @@ def _main(path):
                     else:
                        print(f'Change party to the one holding secrets {test} and {value}.')
                 case ['help']:
-                    print('To be written...')
+                    zeek_prompt.handle_help(None)
+                case ['help', *cmd]:
+                    zeek_prompt.handle_help(cmd)
                 case ['hide', *value, 'as', label]:
                     if label in zeek_prompt.get_labels():
                        print(f'Label {label} exists.')

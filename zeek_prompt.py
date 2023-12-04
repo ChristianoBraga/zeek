@@ -14,9 +14,6 @@ except Exception as e:
 class ZeekPrompt:
     def __init__(self, path):
         self._zeek_env = ZeekEnv(path)
-        # self.completer = pt.completion.WordCompleter(
-            # ['call', 'check call', 'env', 'exit', 'hash hide', 'hash new party', 'help', 'hide', 'labels', 'new party', 
-            #  'parties', 'party', 'hash prove', 'prove', 'save labels', 'send secret', 'send proof', 'verify'], ignore_case=True)
         self.session = pt.PromptSession(history=pt.history.FileHistory(self._zeek_env.get_hist()))
         labels_file_name = f'{path}/labels.json' 
         if os.path.exists(labels_file_name) and \
@@ -33,7 +30,6 @@ class ZeekPrompt:
             fh = open(labels_file_name, 'w')
             json.dump(self._labels, fh, indent=4)  
             fh.close()              
-
 
     def good_bye(self):
         print('\nBye')
@@ -253,6 +249,18 @@ class ZeekPrompt:
         except Exception as e:
             print(e)
             return 1, f'Unexpected error while executing Verify.'
+
+    def handle_help(self, cmd):
+        fh = open(f'{os.getcwd()}/help_msgs.json')
+        hm = json.load(fh)
+        fh.close()
+        match cmd:
+            case None: 
+                cmds = ', '.join(hm.keys())
+                print(f'Type help <cmd> where <cmd> in {cmds}')
+            case c:
+                c_str = ' '.join(c)
+                print(hm[c_str]) if c_str in hm.keys() else print(f'Command {c_str} unknown.')
 
     def handle_inspect(self, proof_key, test, value, output):
         try:
